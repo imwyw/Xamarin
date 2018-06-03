@@ -1,6 +1,6 @@
 # Summary
 * [介绍](README.md)
 
-* [基础](.\Basic\README.md)
-    * [入门](.\Basic\Init.md)
+* [入门](.\Basic\README.md)
+    * [hello ios](.\Basic\hello-ios.md)
     * [用户界面](.\Basic\View.md)

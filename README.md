@@ -1,3 +1,13 @@
+<!-- TOC -->
+
+- [Xamarin](#xamarin)
+    - [Xamarin简介](#xamarin)
+    - [Xamarin 的工作原理](#xamarin)
+        - [Xamarin.iOS.dll 和 Mono.Android.dll](#xamariniosdll--monoandroiddll)
+        - [应用程序输出](#)
+
+<!-- /TOC -->
+
 # Xamarin
 
 ## Xamarin简介
@@ -31,12 +41,3 @@ Xamarin 应用程序针对 .NET BCL（称为 Xamarin 移动配置文件）的子
 
 编译 Xamarin 应用程序时，结果是应用程序包，要么是 iOS 中的 .app 文件，要么是 Android 中的 .apk 文件。 这些文件与使用平台的默认 IDE 生成的应用程序包不好区别，并且这些文件均可通过完全相同的方式部署。
 
-## 必需组件
-若要针对 Xamarin.iOS 构建，需具备以下条件：
-* iOS SDK 最新版。
-* Xcode 最新版。
-* Mac OS X Sierra(10.12) 及更高版本。
-
-## 在 Mac 上安装和配置 Xamarin.iOS
-
-## 设置设备进行开发
