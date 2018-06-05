@@ -15,6 +15,7 @@
             - [ContentMode显示模式](#contentmode)
         - [UILabel](#uilabel)
         - [结合UITextField实现登陆框](#uitextfield)
+        - [键盘UIKeyboardType](#uikeyboardtype)
 
 <!-- /TOC -->
 
@@ -298,4 +299,70 @@ public partial class ViewController : UIViewController
     }
 }
 ```
+
+### 键盘UIKeyboardType
+```cs
+UITextField txt = new UITextField();
+//修改键盘类型
+txt.KeyboardType = UIKeyboardType.KeyboardTypeDefault;
+```
+
+1.UIKeyboardTypeDefault
+
+![](..\assets\ui\UIKeyboardTypeDefault.png)
+
+2.UIKeyboardTypeASCIICapable
+
+![](..\assets\ui\UIKeyboardTypeASCIICapable.png)
+
+3.UIKeyboardTypeNumbersAndPunctuation
+
+![](..\assets\ui\UIKeyboardTypeNumbersAndPunctuation.png)
+
+4.UIKeyboardTypeURL
+
+![](..\assets\ui\UIKeyboardTypeURL.png)
+
+5.UIKeyboardTypeNumberPad
+
+![](..\assets\ui\UIKeyboardTypeNumberPad.png)
+
+6.UIKeyboardTypePhonePad
+
+![](..\assets\ui\UIKeyboardTypePhonePad.png)
+
+7.UIKeyboardTypeNamePhonePad
+
+![](..\assets\ui\UIKeyboardTypeNamePhonePad.png)
+
+8.UIKeyboardTypeEmailAddress
+
+![](..\assets\ui\UIKeyboardTypeEmailAddress.png)
+
+9.UIKeyboardTypeDecimalPad
+
+![](..\assets\ui\UIKeyboardTypeDecimalPad.png)
+
+10.UIKeyboardTypeTwitter
+
+![](..\assets\ui\UIKeyboardTypeTwitter.png)
+
+11.UIKeyboardTypeWebSearch
+
+![](..\assets\ui\UIKeyboardTypeWebSearch.png)
+
+12.UIKeyboardTypeAlphabet == UIKeyboardTypeASCIICapable
+
+![](..\assets\ui\UIKeyboardTypeAlphabet.png)
+
+
+
+
+
+
+
+
+
+
+
 
