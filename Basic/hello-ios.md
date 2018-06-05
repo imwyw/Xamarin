@@ -260,7 +260,7 @@ CallButton.TouchUpInside += (object sender, EventArgs e) => {
     };
 ```
 
-7.保存更改，然后通过选择“生成”>“全部生成”或按 ⌘ + B 来生成应用程序。如果应用程序进行了编译，则成功消息会出现在 IDE 顶部：
+7.保存更改，然后通过选择“生成”>“全部生成”或按（⌘ + B）来生成应用程序。如果应用程序进行了编译，则成功消息会出现在 IDE 顶部：
 
 ![](..\assets\helloios\Build_0.png)
 
