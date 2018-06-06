@@ -22,6 +22,11 @@
         - [滚动视图UIScrollView](#uiscrollview)
             - [滚动](#)
             - [滚动事件](#)
+        - [页面控件UIPageControl](#uipagecontrol)
+        - [警告UIAlertView](#uialertview)
+            - [title](#title)
+            - [button](#button)
+            - [button-click](#button-click)
 
 <!-- /TOC -->
 
@@ -539,7 +544,7 @@ private void CreateAndInit()
 
 #### 滚动事件
 
-![](..\assets\ui\ui_scroll_view_2.png)
+![](..\assets\ui\ui_scroll_view2.png)
 
 ```cs
 public override void ViewDidLoad()
@@ -554,7 +559,7 @@ private void CreateAndInit()
 {
     UIScrollView scrView = new UIScrollView();
     scrView.Frame = new CGRect(0, 0, View.Frame.Width, View.Frame.Height);
-    scrView.ContentSize = new CGSize(320, 2000);
+    scrView.ContentSize = new CGSize(View.Frame.Width, 2000);
     View.AddSubview(scrView);
 
     scrView.Scrolled += delegate
@@ -571,8 +576,8 @@ private void CreateAndInit()
     for (int i = 0; i < 21; i++)
     {
         UILabel lbl = new UILabel();
-        lbl.Frame = new CGRect(0, y, 320, 50);
-        lbl.BackgroundColor = UIColor.Cyan;
+        lbl.Frame = new CGRect(0, y, View.Frame.Width, 50);
+        lbl.BackgroundColor = UIColor.FromRGB(249, 205, 169);
         lbl.Text = string.Format("{0}", i);
         scrView.AddSubview(lbl);
         y += 100;
@@ -580,3 +585,230 @@ private void CreateAndInit()
 }
 ```
 
+### 页面控件UIPageControl
+
+![](..\assets\ui\ui_pagecontrol_1.png)
+
+```cs
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using CoreGraphics;
+using Foundation;
+using UIKit;
+
+namespace Single
+{
+    public partial class ViewController : UIViewController
+    {
+        protected ViewController(IntPtr handle) : base(handle)
+        {
+            // Note: this .ctor should not contain any initialization logic.
+        }
+
+        UIImageView page1;
+        UIImageView page2;
+        UIImageView page3;
+        UIScrollView scrollView;
+        UIPageControl pageControl;
+
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+            // Perform any additional setup after loading the view, typically from a nib.
+
+            CreateAndInit();
+        }
+
+        private void CreateAndInit()
+        {
+            scrollView = new UIScrollView();
+            scrollView.Frame = new CGRect(0, 0, View.Frame.Width, View.Frame.Height);
+            scrollView.DecelerationEnded += ScrollView_DecelerationEnded;
+
+            pageControl = new UIPageControl();
+            pageControl.Frame = new CGRect(0, 540, View.Frame.Width, 40);
+            pageControl.Pages = 3;
+            pageControl.ValueChanged += PageControl_ValueChanged;
+            scrollView.Scrolled += delegate
+            {
+                //Console.WriteLine("Scrolled!");
+            };
+            scrollView.PagingEnabled = true;
+            CGRect pageFrame = scrollView.Frame;
+            scrollView.ContentSize = new CGSize(pageFrame.Width * 3, pageFrame.Height);
+
+            page1 = new UIImageView(pageFrame);
+            page1.ContentMode = UIViewContentMode.ScaleAspectFit;
+            page1.Image = UIImage.FromFile("1.jpg");
+            pageFrame.X += this.scrollView.Frame.Width;
+
+            page2 = new UIImageView(pageFrame);
+            page2.ContentMode = UIViewContentMode.ScaleAspectFit;
+            page2.Image = UIImage.FromFile("3.jpg");
+            pageFrame.X += this.scrollView.Frame.Width;
+
+            page3 = new UIImageView(pageFrame);
+            page3.ContentMode = UIViewContentMode.ScaleAspectFit;
+            page3.Image = UIImage.FromFile("4.jpg");
+            pageFrame.X += this.scrollView.Frame.Width;
+
+            scrollView.AddSubview(page1);
+            scrollView.AddSubview(page2);
+            scrollView.AddSubview(page3);
+
+            View.AddSubview(scrollView);
+            View.AddSubview(pageControl);
+        }
+
+        /// <summary>
+        /// Scrolls the view deceleration ended.
+        /// 滚动视图结束时
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">E.</param>
+        void ScrollView_DecelerationEnded(object sender, EventArgs e)
+        {
+            Console.WriteLine("ScrollView_DecelerationEnded");
+            CGPoint contentOffset = scrollView.ContentOffset;
+            switch (pageControl.CurrentPage)
+            {
+                case 0:
+                    contentOffset.X = page1.Frame.X;
+                    scrollView.SetContentOffset(contentOffset, true);
+                    break;
+                case 1:
+                    contentOffset.X = page2.Frame.X;
+                    scrollView.SetContentOffset(contentOffset, true);
+                    break;
+                case 2:
+                    contentOffset.X = page3.Frame.X;
+                    scrollView.SetContentOffset(contentOffset, true);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Pages the control value changed.
+        /// 滚动事件 未触发。。。
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">E.</param>
+        void PageControl_ValueChanged(object sender, EventArgs e)
+        {
+            Console.WriteLine("PageControl_ValueChanged");
+            nfloat x1 = page1.Frame.X;
+            nfloat x2 = page2.Frame.X;
+            nfloat x = scrollView.ContentOffset.X;
+
+            if (x == x1)
+            {
+                this.pageControl.CurrentPage = 0;
+            }
+            else if (x == x2)
+            {
+                this.pageControl.CurrentPage = 1;
+            }
+            else
+            {
+                this.pageControl.CurrentPage = 2;
+            }
+        }
+
+        public override void DidReceiveMemoryWarning()
+        {
+            base.DidReceiveMemoryWarning();
+            // Release any cached data, images, etc that aren't in use.
+        }
+    }
+}
+
+```
+
+
+### 警告UIAlertView
+#### title
+
+![](..\assets\ui\ui_alert_msg.png)
+
+```cs
+public override void ViewDidLoad()
+{
+    base.ViewDidLoad();
+    // Perform any additional setup after loading the view, typically from a nib.
+
+    UIAlertView altView = new UIAlertView();
+    altView.Title = "提示";
+    altView.Message = "电量不足";
+    altView.Show();
+}
+```
+
+#### button
+
+![](..\assets\ui\ui_alert_button.png)
+
+```cs
+public override void ViewDidLoad()
+{
+    base.ViewDidLoad();
+    // Perform any additional setup after loading the view, typically from a nib.
+
+    UIAlertView altView = new UIAlertView();
+    altView.Title = "谢谢";
+    altView.Message = "亲如果你对我们的商品满意，清点亮五颗星";
+    altView.AddButton("前往评论");
+    altView.AddButton("暂不评论");
+    altView.AddButton("残忍拒绝");
+    altView.Show();
+}
+```
+
+#### button-click
+
+![](..\assets\ui\ui_alert_button_click.png)
+
+```cs
+UIButton btnShowAler;
+
+public override void ViewDidLoad()
+{
+    base.ViewDidLoad();
+    // Perform any additional setup after loading the view, typically from a nib.
+
+    btnShowAler = new UIButton();
+    btnShowAler.Frame = new CGRect(100, 300, 110, 30);
+    btnShowAler.SetTitle("Show Alert", UIControlState.Normal);
+    btnShowAler.SetTitleColor(UIColor.Black, UIControlState.Normal);
+    View.AddSubview(btnShowAler);
+    btnShowAler.TouchUpInside += (sender, e) =>
+    {
+        ShowAlert("Alert Message", "Tap OK or Cancel");
+    };
+}
+
+private void ShowAlert(string title, string message)
+{
+    UIAlertView altView = new UIAlertView();
+    altView.Title = title;
+    altView.Message = message;
+
+    altView.AddButton("OK");
+    altView.AddButton("Cancel");
+    //事件响应
+    altView.Dismissed += (sender, e) =>
+    {
+        if (e.ButtonIndex == 0)
+        {
+            btnShowAler.SetTitle("OK!", UIControlState.Normal);
+        }
+        else
+        {
+            btnShowAler.SetTitle("Cancelled!", UIControlState.Normal);
+        }
+    };
+    altView.Show();
+}
+```
