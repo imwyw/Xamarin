@@ -663,13 +663,38 @@ namespace Single
 
         /// <summary>
         /// Scrolls the view deceleration ended.
-        /// 滚动视图结束时
+        /// 滚动视图结束时，根据滚动视图位置判断是哪一张图片
         /// </summary>
         /// <param name="sender">Sender.</param>
         /// <param name="e">E.</param>
         void ScrollView_DecelerationEnded(object sender, EventArgs e)
         {
-            Console.WriteLine("ScrollView_DecelerationEnded");
+            nfloat x1 = page1.Frame.X;
+            nfloat x2 = page2.Frame.X;
+            nfloat x = scrollView.ContentOffset.X;
+
+            if (x == x1)
+            {
+                this.pageControl.CurrentPage = 0;
+            }
+            else if (x == x2)
+            {
+                this.pageControl.CurrentPage = 1;
+            }
+            else
+            {
+                this.pageControl.CurrentPage = 2;
+            }
+        }
+
+        /// <summary>
+        /// Pages the control value changed.
+        /// 点击分页小点时才触发
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">E.</param>
+        void PageControl_ValueChanged(object sender, EventArgs e)
+        {
             CGPoint contentOffset = scrollView.ContentOffset;
             switch (pageControl.CurrentPage)
             {
@@ -687,33 +712,6 @@ namespace Single
                     break;
                 default:
                     break;
-            }
-        }
-
-        /// <summary>
-        /// Pages the control value changed.
-        /// 滚动事件 未触发。。。
-        /// </summary>
-        /// <param name="sender">Sender.</param>
-        /// <param name="e">E.</param>
-        void PageControl_ValueChanged(object sender, EventArgs e)
-        {
-            Console.WriteLine("PageControl_ValueChanged");
-            nfloat x1 = page1.Frame.X;
-            nfloat x2 = page2.Frame.X;
-            nfloat x = scrollView.ContentOffset.X;
-
-            if (x == x1)
-            {
-                this.pageControl.CurrentPage = 0;
-            }
-            else if (x == x2)
-            {
-                this.pageControl.CurrentPage = 1;
-            }
-            else
-            {
-                this.pageControl.CurrentPage = 2;
             }
         }
 
