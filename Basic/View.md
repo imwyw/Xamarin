@@ -16,6 +16,12 @@
         - [UILabel](#uilabel)
         - [结合UITextField实现登陆框](#uitextfield)
         - [键盘UIKeyboardType](#uikeyboardtype)
+            - [类型](#)
+            - [显示键盘改变输入视图位置](#)
+        - [进度条UIProgressView](#uiprogressview)
+        - [滚动视图UIScrollView](#uiscrollview)
+            - [滚动](#)
+            - [滚动事件](#)
 
 <!-- /TOC -->
 
@@ -301,68 +307,276 @@ public partial class ViewController : UIViewController
 ```
 
 ### 键盘UIKeyboardType
+
 ```cs
 UITextField txt = new UITextField();
 //修改键盘类型
 txt.KeyboardType = UIKeyboardType.KeyboardTypeDefault;
 ```
 
-1.UIKeyboardTypeDefault
+#### 类型
+1.Default
 
 ![](..\assets\ui\UIKeyboardTypeDefault.png)
 
-2.UIKeyboardTypeASCIICapable
+2.ASCIICapable
 
 ![](..\assets\ui\UIKeyboardTypeASCIICapable.png)
 
-3.UIKeyboardTypeNumbersAndPunctuation
+3.NumbersAndPunctuation
 
 ![](..\assets\ui\UIKeyboardTypeNumbersAndPunctuation.png)
 
-4.UIKeyboardTypeURL
+4.URL
 
 ![](..\assets\ui\UIKeyboardTypeURL.png)
 
-5.UIKeyboardTypeNumberPad
+5.NumberPad
 
 ![](..\assets\ui\UIKeyboardTypeNumberPad.png)
 
-6.UIKeyboardTypePhonePad
+6.PhonePad
 
 ![](..\assets\ui\UIKeyboardTypePhonePad.png)
 
-7.UIKeyboardTypeNamePhonePad
+7.NamePhonePad
 
 ![](..\assets\ui\UIKeyboardTypeNamePhonePad.png)
 
-8.UIKeyboardTypeEmailAddress
+8.EmailAddress
 
 ![](..\assets\ui\UIKeyboardTypeEmailAddress.png)
 
-9.UIKeyboardTypeDecimalPad
+9.DecimalPad
 
 ![](..\assets\ui\UIKeyboardTypeDecimalPad.png)
 
-10.UIKeyboardTypeTwitter
+10.Twitter
 
 ![](..\assets\ui\UIKeyboardTypeTwitter.png)
 
-11.UIKeyboardTypeWebSearch
+11.WebSearch
 
 ![](..\assets\ui\UIKeyboardTypeWebSearch.png)
 
-12.UIKeyboardTypeAlphabet == UIKeyboardTypeASCIICapable
+12.Alphabet == ASCIICapable
 
 ![](..\assets\ui\UIKeyboardTypeAlphabet.png)
 
+#### 显示键盘改变输入视图位置
 
+添加TextField，需要注意文本框位置偏下，这样弹出键盘需要做特殊处理：
 
+![](..\assets\ui\ui_keyboard_hide.png)
+![](..\assets\ui\ui_keyboard_show.png)
 
+```cs
+//需要using Foundation;
+NSObject kbdWillShow, kbdDidHide;
 
+public override void ViewDidLoad()
+{
+    base.ViewDidLoad();
+    // Perform any additional setup after loading the view, typically from a nib.
 
+    CreateAndInit();
+}
 
+private void CreateAndInit()
+{
+    //调整View背景色，否则看不出来文本框
+    View.BackgroundColor = UIColor.LightGray;
 
+    UITextField emailField = new UITextField();
+    emailField.Frame = new CGRect(20, View.Frame.Height - 50, View.Frame.Width - 50, 30);
+    emailField.KeyboardType = UIKeyboardType.EmailAddress;
+    emailField.Text = "hello world";
+    emailField.BackgroundColor = UIColor.White;
+    View.AddSubview(emailField);
 
+    //键盘将要显示时
+    kbdWillShow = UIKeyboard.Notifications.ObserveWillShow((s, e) =>
+    {
+        CGRect kbdBounds = e.FrameEnd;
+        CGRect txtFrame = emailField.Frame;
+        txtFrame.Y -= kbdBounds.Height;
+        emailField.Frame = txtFrame;
+    });
 
+    //键盘将要隐藏时
+    kbdDidHide = UIKeyboard.Notifications.ObserveDidHide((s, e) =>
+    {
+        CGRect kbdBounds = e.FrameEnd;
+        CGRect txtFrame = emailField.Frame;
+        txtFrame.Y += kbdBounds.Height;
+        emailField.Frame = txtFrame;
+    });
 
+    //键盘上的return
+    emailField.ShouldReturn = delegate(UITextField txtField) {
+        return txtField.ResignFirstResponder();
+    };
+}
+```
+
+### 进度条UIProgressView
+
+![](..\assets\ui\ui_progress_start.png)
+
+```cs
+UIProgressView progressView;
+UILabel lblStatus;
+UIButton btnStart;
+float increment = 0f;
+
+public override void ViewDidLoad()
+{
+    base.ViewDidLoad();
+    // Perform any additional setup after loading the view, typically from a nib.
+
+    CreateAndInit();
+}
+
+private void CreateAndInit()
+{
+    lblStatus = new UILabel();
+    lblStatus.Frame = new CGRect(50, 50, View.Frame.Width - 100, 30);
+    lblStatus.Text = "current value:";
+    View.AddSubview(lblStatus);
+
+    btnStart = new UIButton();
+    btnStart.Frame = new CGRect(50, View.Frame.Height - 300, View.Frame.Width - 100, 40);
+    btnStart.SetTitle("Tap To Start Progress...", UIControlState.Normal);
+    btnStart.SetTitle("Progressing...", UIControlState.Disabled);
+    btnStart.SetTitleColor(UIColor.Black, UIControlState.Normal);
+    btnStart.SetTitleColor(UIColor.LightGray, UIControlState.Disabled);
+    View.AddSubview(btnStart);
+
+    progressView = new UIProgressView(new CGRect(50, 200, View.Frame.Width - 100, 50));
+    progressView.Progress = 0;
+    increment = 1f / 100f;
+    View.AddSubview(progressView);
+
+    //添加事件监听
+    btnStart.TouchUpInside += delegate
+    {
+        btnStart.Enabled = false;
+        progressView.Progress = 0f;
+        Task.Factory.StartNew(this.StartProgress);
+    };
+}
+
+/// <summary>
+/// 进度条加载事件
+/// </summary>
+private void StartProgress()
+{
+    float currentProgress = 0f;
+    while (currentProgress < 1f)
+    {
+        Thread.Sleep(200);
+        this.InvokeOnMainThread(delegate
+        {
+            progressView.Progress += increment;
+            currentProgress = progressView.Progress;
+            lblStatus.Text = string.Format("Current value: {0}", Math.Round(progressView.Progress, 2));
+            if (currentProgress >= 1f)
+            {
+                lblStatus.Text = "Progress completed!";
+                btnStart.Enabled = true;
+            }
+        });
+    }
+}
+
+```
+
+### 滚动视图UIScrollView
+1. UIScrollView是滚动的view，UIView本身不能滚动，子类UIScrollview拓展了滚动方面的功能。
+2. UIScrollView是所有滚动视图的基类。以后的UITableView，UITextView等视图都是继承于该类。
+
+使用场景：显示不下（单张大图）；内容太多（图文混排）；滚动头条（图片）；相册等
+
+#### 滚动
+
+![](..\assets\ui\ui_scrollview_1.png)
+
+```cs
+UIImageView imgView;
+UIScrollView scrlView;
+
+public override void ViewDidLoad()
+{
+    base.ViewDidLoad();
+    // Perform any additional setup after loading the view, typically from a nib.
+
+    CreateAndInit();
+}
+
+private void CreateAndInit()
+{
+    imgView = new UIImageView(UIImage.FromFile("3.jpg"));
+    scrlView = new UIScrollView();
+    scrlView.Frame = new CGRect(0, 0, View.Frame.Width, View.Frame.Height);
+    scrlView.ContentSize = imgView.Image.Size;
+    scrlView.ContentOffset = new CGPoint(200f, 50f);
+
+    scrlView.PagingEnabled = true;
+    scrlView.MinimumZoomScale = 0.25f;//缩小的最小比例
+    scrlView.MaximumZoomScale = 2f;//放大的最大比例
+
+    scrlView.ViewForZoomingInScrollView = delegate (UIScrollView scroll)
+    {
+        return this.imgView;
+    };
+    scrlView.ZoomScale = 1f;//比例变化
+    scrlView.IndicatorStyle = UIScrollViewIndicatorStyle.Black;//滚动指示器风格
+
+    scrlView.AddSubview(imgView);
+    View.AddSubview(scrlView);
+}
+```
+
+#### 滚动事件
+
+![](..\assets\ui\ui_scroll_view_2.png)
+
+```cs
+public override void ViewDidLoad()
+{
+    base.ViewDidLoad();
+    // Perform any additional setup after loading the view, typically from a nib.
+
+    CreateAndInit();
+}
+
+private void CreateAndInit()
+{
+    UIScrollView scrView = new UIScrollView();
+    scrView.Frame = new CGRect(0, 0, View.Frame.Width, View.Frame.Height);
+    scrView.ContentSize = new CGSize(320, 2000);
+    View.AddSubview(scrView);
+
+    scrView.Scrolled += delegate
+    {
+        Console.WriteLine("开始滚动。。。");
+    };
+    scrView.DecelerationEnded += delegate
+    {
+        Console.WriteLine("滚动结束。。。");
+    };
+
+    //为滚动视图添加标签
+    int y = 10;
+    for (int i = 0; i < 21; i++)
+    {
+        UILabel lbl = new UILabel();
+        lbl.Frame = new CGRect(0, y, 320, 50);
+        lbl.BackgroundColor = UIColor.Cyan;
+        lbl.Text = string.Format("{0}", i);
+        scrView.AddSubview(lbl);
+        y += 100;
+    }
+}
+```
 
