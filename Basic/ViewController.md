@@ -97,6 +97,7 @@ public override void ViewDidLoad()
     {
         ViewController1 v1 = new ViewController1();
         v1.Title = "First View";
+        //导航控制器入栈的方式切换页面，true表示动画效果
         this.NavigationController.PushViewController(v1, true);
     };
 
@@ -105,6 +106,7 @@ public override void ViewDidLoad()
     {
         ViewController2 v2 = new ViewController2();
         v2.Title = "Second View";
+        //导航控制器入栈的方式切换页面，true表示动画效果
         this.NavigationController.PushViewController(v2, true);
     };
 }
@@ -139,6 +141,7 @@ public override void ViewDidLoad()
 
     btnBack.TouchUpInside += (sender, e) =>
     {
+        //返回根视图，true表示动画效果
         this.NavigationController.PopToRootViewController(true);
     };
 }
@@ -176,3 +179,4 @@ public override void ViewDidLoad()
     };
 }
 ```
+
