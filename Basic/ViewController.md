@@ -2,15 +2,42 @@
 
 - [控制器](#控制器)
     - [导航控制器](#导航控制器)
-        - [Nav基本](#nav基本)
+        - [Nav语法](#nav语法)
+        - [Nav简单实例](#nav简单实例)
         - [Nav实现切换](#nav实现切换)
+    - [标签栏中提供控制器](#标签栏中提供控制器)
+        - [添加标签栏控制器](#添加标签栏控制器)
+        - [tab实例](#tab实例)
+        - [标签Item响应](#标签item响应)
 
 <!-- /TOC -->
 
 # 控制器
 ## 导航控制器
 
-### Nav基本
+### Nav语法
+UINavigationController 导航控制器，是UIViewController的子类。
+
+UINavigationController 使用栈存储结构来管理控制器，栈具有后进先出的功能。
+
+以下均在【AppDelegate.cs】文件【FinishedLaunching】方法中修改：
+
+```cs
+//1-实例化
+UINavigationController 导航控制器对象 = new UINavigationController();
+
+//2-进行压栈，将视图以进栈的方式放入到导航控制器中，使用方法PushViewController()，bool值为过渡动画开关
+导航视图控制器对象.PushViewController(视图控制器对象 , bool值);
+
+//2-或者可以直接在构造导航视图控制器对象时进行压栈，如下：
+UINavigationController 导航控制器对象 = new UINavigationController(视图控制器对象);
+
+//3-最后修改根视图控制器
+window.RootViewController = 导航视图控制器对象;
+```
+
+### Nav简单实例
+
 从“新建解决方案”对话框中，选择“iOS”>“应用”>“单视图应用程序”模板，确保选择了 C#。
 
 新建项目名称为【NavDemo】，并添加视图控制器，名称为【MainViewController.cs】，如下：
@@ -179,4 +206,85 @@ public override void ViewDidLoad()
     };
 }
 ```
+
+## 标签栏中提供控制器
+UITabBarController 标签栏控制器，也是UIViewController的子类。
+
+管理多个具有并列关系的控制器，位于屏幕下方，每个标签关联一个视图控制器。
+
+### 添加标签栏控制器
+以下均在【AppDelegate.cs】文件【FinishedLaunching】方法中修改：
+
+```cs
+//1-实例化
+UITabBarController 标签栏控制器对象 = new UITabBarController();
+
+//2-设置需要添加的视图，使用SetViewControllers方法
+标签栏控制器对象.SetViewControllers(new UIViewController[] {
+    视图控制器对象1,
+    视图控制器对象2,
+    ......
+}, bool值);
+
+//3-设置根视图控制器
+window.RootViewController = 标签栏控制器对象;
+```
+
+### tab实例
+从“新建解决方案”对话框中，选择“iOS”>“应用”>“单视图应用程序”模板，确保选择了 C#。
+
+添加两个视图控制器，分别为【FirstViewController.cs】和【SecondViewController.cs】，如图：
+
+![](..\assets\cont\tab_view_1.png)
+
+修改【AppDelegate.cs】中方法：
+```cs
+public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
+{
+    // Override point for customization after application launch.
+    // If not required for your application you can safely delete this method
+
+    Window = new UIWindow(UIScreen.MainScreen.Bounds);
+    FirstViewController firstView = new FirstViewController();
+    SecondViewController secondView = new SecondViewController();
+
+    //实例化标签栏控制器
+    UITabBarController tabBarController = new UITabBarController();
+    tabBarController.SetViewControllers(new UIViewController[]{
+        firstView,
+        secondView
+    }, true);
+    //设置标题
+    tabBarController.TabBar.Items[0].Title = "First";
+    tabBarController.TabBar.Items[1].Title = "Second";
+
+    //设置标题栏样式
+    UITextAttributes textAttr = new UITextAttributes()
+    {
+        Font = UIFont.SystemFontOfSize(20),
+        TextColor = UIColor.Orange
+    };
+    UITextAttributes textSelected = new UITextAttributes()
+    {
+        TextColor = UIColor.Blue
+    };
+    UITabBarItem.Appearance.SetTitleTextAttributes(textAttr, UIControlState.Normal);
+    UITabBarItem.Appearance.SetTitleTextAttributes(textSelected, UIControlState.Selected);
+
+    Window.RootViewController = tabBarController;
+    Window.MakeKeyAndVisible();
+
+    return true;
+}
+```
+
+![](..\assets\cont\tab_res_1.png)
+
+### 标签Item响应
+ViewControllerSelected 事件可以实现标签栏控制器的响应，语法如下：
+```cs
+标签栏控制器对象名.ViewControllerSelected += 触摸按钮后的方法;
+```
+
+
 
