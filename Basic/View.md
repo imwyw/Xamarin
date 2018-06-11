@@ -1,32 +1,33 @@
 <!-- TOC -->
 
-- [用户界面](#)
-    - [视图](#)
-        - [常用视图](#)
+- [用户界面](#用户界面)
+    - [视图](#视图)
+        - [常用视图](#常用视图)
         - [UIView](#uiview)
-            - [工具拖拽](#)
-            - [代码进行添加设置](#)
+            - [工具拖拽](#工具拖拽)
+            - [代码进行添加设置](#代码进行添加设置)
         - [UIButton](#uibutton)
-            - [工具箱拖拽](#)
-            - [通过代码进行维护](#)
-            - [按钮的响应](#)
+            - [工具箱拖拽](#工具箱拖拽)
+            - [通过代码进行维护](#通过代码进行维护)
+            - [按钮的响应](#按钮的响应)
         - [UIImageView](#uiimageview)
-            - [基本](#)
-            - [ContentMode显示模式](#contentmode)
+            - [基本](#基本)
+            - [ContentMode显示模式](#contentmode显示模式)
         - [UILabel](#uilabel)
-        - [结合UITextField实现登陆框](#uitextfield)
-        - [键盘UIKeyboardType](#uikeyboardtype)
-            - [类型](#)
-            - [显示键盘改变输入视图位置](#)
-        - [进度条UIProgressView](#uiprogressview)
-        - [滚动视图UIScrollView](#uiscrollview)
-            - [滚动](#)
-            - [滚动事件](#)
-        - [页面控件UIPageControl](#uipagecontrol)
-        - [警告UIAlertView](#uialertview)
+        - [结合UITextField实现登陆框](#结合uitextfield实现登陆框)
+        - [键盘UIKeyboardType](#键盘uikeyboardtype)
+            - [类型](#类型)
+            - [显示键盘改变输入视图位置](#显示键盘改变输入视图位置)
+        - [进度条UIProgressView](#进度条uiprogressview)
+        - [滚动视图UIScrollView](#滚动视图uiscrollview)
+            - [滚动](#滚动)
+            - [滚动事件](#滚动事件)
+        - [页面控件UIPageControl](#页面控件uipagecontrol)
+        - [警告UIAlertView](#警告uialertview)
             - [title](#title)
             - [button](#button)
             - [button-click](#button-click)
+        - [一次修改相同的视图](#一次修改相同的视图)
 
 <!-- /TOC -->
 
@@ -810,4 +811,42 @@ private void ShowAlert(string title, string message)
     altView.Show();
 }
 ```
+
+### 一次修改相同的视图
+在一个应用程序中，使用了很多相同的视图。如果想要将这些视图的属性设置为相同值，我们可以采用一个简单的方。
+
+使用Appearance属性，它是一个类型方法，语法形式如下：
+`视图类.Appearance.视图的属性 = 属性设置;`
+
+比如修改多个label标签的颜色和字体大小如下：
+```cs
+public override void ViewDidLoad()
+{
+    base.ViewDidLoad();
+    // Perform any additional setup after loading the view, typically from a nib.
+
+    UILabel label1 = new UILabel();
+    label1.Frame = new CGRect(0, 90, View.Frame.Width, 50);
+    label.Text = "Label1";
+    View.AddSubview(label1);
+
+    UILabel label2 = new UILabel();
+    label1.Frame = new CGRect(0, 200, View.Frame.Width, 50);
+    label.Text = "Label2";
+    View.AddSubview(label2);
+
+    UILabel label3 = new UILabel();
+    label1.Frame = new CGRect(0, 300, View.Frame.Width, 50);
+    label.Text = "Label3";
+    View.AddSubview(label3);
+
+    //统一设置颜色
+    UILabel.Appearance.TextColor = UIColor.Red;
+    //统一设置字体大小
+    UILabel.Appearance.Font = UIFont.SystemFontOfSize(40);
+}
+```
+
+
+
 
