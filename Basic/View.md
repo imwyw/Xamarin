@@ -30,6 +30,7 @@
         - [UITableView](#uitableview)
             - [简单实例](#简单实例)
             - [设置Table](#设置table)
+            - [Table风格](#table风格)
         - [一次修改相同的视图](#一次修改相同的视图)
 
 <!-- /TOC -->
@@ -974,6 +975,136 @@ public class MyViewSource : UITableViewSource
     public override nint RowsInSection(UITableView tableview, nint section)
     {
         return this.dupPremTeams.Count;
+    }
+}
+```
+
+#### Table风格
+设置不同的section以区分内容：
+
+![](..\assets\ui_adv\ui_table_res_2.png)
+
+```cs
+public partial class ViewController : UIViewController
+{
+    protected ViewController(IntPtr handle) : base(handle)
+    {
+        // Note: this .ctor should not contain any initialization logic.
+    }
+
+    List<string> titleTeams = new List<string>() { "衣服", "包包", "配饰" };
+    List<string> premTeams1 = new List<string>() { "薄外套", "防晒衣", "雪纺", "T恤", "衬衫" };
+    List<string> premTeams2 = new List<string>() { "双肩包", "编织包", "复古包", "斜挎包", "钱包", "手提包" };
+    List<string> premTeams3 = new List<string>() { "项链", "脚链", "戒指", "手镯", "佛珠手串", "毛衣链", "耳饰", "手链" };
+
+    public override void ViewDidLoad()
+    {
+        base.ViewDidLoad();
+        // Perform any additional setup after loading the view, typically from a nib.
+
+        UITableView tableView = new UITableView();
+        tableView.Frame = new CoreGraphics.CGRect(0, 0, UIScreen.MainScreen.Bounds.Width
+                                                    , UIScreen.MainScreen.Bounds.Height);
+        tableView.Source = new MyViewSource(premTeams1, premTeams2, premTeams3, titleTeams);
+
+        View.AddSubview(tableView);
+    }
+
+    public override void DidReceiveMemoryWarning()
+    {
+        base.DidReceiveMemoryWarning();
+        // Release any cached data, images, etc that aren't in use.
+    }
+}
+
+/// <summary>
+/// 构造自定义UITableViewSource类
+/// </summary>
+public class MyViewSource : UITableViewSource
+{
+    List<string> dupTitleTeams;
+    List<string> dupPremTeams1;
+    List<string> dupPremTeams2;
+    List<string> dupPremTeams3;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:TableViewDemo.MyViewSource"/> class.
+    /// 自定义构造方法
+    /// </summary>
+    /// <param name="prems1">Prems1.</param>
+    /// <param name="prems2">Prems2.</param>
+    /// <param name="prems3">Prems3.</param>
+    /// <param name="title">Title.</param>
+    public MyViewSource(List<string> prems1, List<string> prems2, List<string> prems3, List<string> title)
+    {
+        dupTitleTeams = title;
+        dupPremTeams1 = prems1;
+        dupPremTeams2 = prems2;
+        dupPremTeams3 = prems3;
+    }
+
+    /// <summary>
+    /// Numbers the of sections.
+    /// 节数设置
+    /// </summary>
+    /// <returns>The of sections.</returns>
+    /// <param name="tableView">Table view.</param>
+    public override nint NumberOfSections(UITableView tableView)
+    {
+        return 3;
+    }
+
+    public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
+    {
+        UITableViewCell cell = new UITableViewCell();
+        switch (indexPath.Section)
+        {
+            case 0:
+                cell.TextLabel.Text = dupPremTeams1[indexPath.Row];
+                break;
+            case 1:
+                cell.TextLabel.Text = dupPremTeams2[indexPath.Row];
+                break;
+            case 2:
+                cell.TextLabel.Text = dupPremTeams3[indexPath.Row];
+                break;
+
+            default:
+                break;
+        }
+        return cell;
+    }
+
+    public override nint RowsInSection(UITableView tableview, nint section)
+    {
+        switch (section)
+        {
+            case 0:
+                return dupPremTeams1.Count;
+            case 1:
+                return dupPremTeams2.Count;
+            case 2:
+                return dupPremTeams3.Count;
+            default:
+                return 0;
+        }
+    }
+
+    /// <summary>
+    /// Titles for header.
+    /// 每一节单独标题设置
+    /// </summary>
+    /// <returns>The for header.</returns>
+    /// <param name="tableView">Table view.</param>
+    /// <param name="section">Section.</param>
+    public override string TitleForHeader(UITableView tableView, nint section)
+    {
+        return dupTitleTeams[int.Parse(section.ToString())];
+    }
+
+    public override nfloat GetHeightForHeader(UITableView tableView, nint section)
+    {
+        return 50;
     }
 }
 ```

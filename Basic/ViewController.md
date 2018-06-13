@@ -290,60 +290,81 @@ ViewControllerSelected 事件可以实现标签栏控制器的响应，语法如
 
 修改上例代码，增加选中事件处理，修改【AppDelegate.cs】中方法：
 ```cs
-public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
+/// <summary>
+/// 构造自定义UITableViewSource类
+/// </summary>
+public class MyViewSource : UITableViewSource
 {
-    // Override point for customization after application launch.
-    // If not required for your application you can safely delete this method
+    List<string> dupPremTeams;
 
-    Window = new UIWindow(UIScreen.MainScreen.Bounds);
-    FirstViewController firstView = new FirstViewController();
-    SecondViewController secondView = new SecondViewController();
-
-    //实例化标签栏控制器
-    UITabBarController tabBarController = new UITabBarController();
-    tabBarController.SetViewControllers(new UIViewController[]{
-        firstView,
-        secondView
-    }, true);
-    //设置标题
-    tabBarController.TabBar.Items[0].Title = "First";
-    tabBarController.TabBar.Items[1].Title = "Second";
-
-    //设置标题栏样式
-    UITextAttributes textAttr = new UITextAttributes()
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:TableViewDemo.MyViewSource"/> class.
+    /// 自定义构造函数
+    /// </summary>
+    /// <param name="prems">Prems.</param>
+    public MyViewSource(List<string> prems)
     {
-        Font = UIFont.SystemFontOfSize(20),
-        TextColor = UIColor.Orange
-    };
-    UITextAttributes textSelected = new UITextAttributes()
+        dupPremTeams = prems;
+    }
+
+    /// <summary>
+    /// Gets the cell.
+    /// 重写获取单元格方法
+    /// </summary>
+    /// <returns>The cell.</returns>
+    /// <param name="tableView">Table view.</param>
+    /// <param name="indexPath">Index path.</param>
+    public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
     {
-        TextColor = UIColor.Blue
-    };
-    UITabBarItem.Appearance.SetTitleTextAttributes(textAttr, UIControlState.Normal);
-    UITabBarItem.Appearance.SetTitleTextAttributes(textSelected, UIControlState.Selected);
+        UITableViewCell cell = new UITableViewCell();
+        //设置单元格文字
+        cell.TextLabel.Text = dupPremTeams[indexPath.Row];
+        //设置单元格图片
+        cell.ImageView.Image = UIImage.FromFile("1.jpg");
+        return cell;
+    }
 
-    //新增部分-响应标签栏控制器
-    tabBarController.ViewControllerSelected += (sender, e) =>
+    //添加页眉
+    public override string TitleForHeader(UITableView tableView, nint section)
     {
-        UIAlertView altView = new UIAlertView();
+        return "球队";
+    }
 
-        //判断当前选择的是哪一个视图对象
-        if (e.ViewController == firstView)
-        {
-            altView.Title = "打开FirstViewController对象的视图";
-        }
-        else
-        {
-            altView.Title = "打开SecondViewController对象的视图";
-        }
-        altView.AddButton("Cancel");
-        altView.Show();
-    };
+    //添加页脚
+    public override string TitleForFooter(UITableView tableView, nint section)
+    {
+        return "表尾";
+    }
 
-    Window.RootViewController = tabBarController;
-    Window.MakeKeyAndVisible();
+    //设置页眉行高
+    public override nfloat GetHeightForHeader(UITableView tableView, nint section)
+    {
+        return 30;
+    }
 
-    return true;
+    //设置页脚行高
+    public override nfloat GetHeightForFooter(UITableView tableView, nint section)
+    {
+        return 25;
+    }
+
+    //设置cell行高
+    public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
+    {
+        return 70;
+    }
+
+    /// <summary>
+    /// Rowses the in section.
+    /// 重写一节中有多少行方法
+    /// </summary>
+    /// <returns>The in section.</returns>
+    /// <param name="tableview">Tableview.</param>
+    /// <param name="section">Section.</param>
+    public override nint RowsInSection(UITableView tableview, nint section)
+    {
+        return this.dupPremTeams.Count;
+    }
 }
 ```
 
