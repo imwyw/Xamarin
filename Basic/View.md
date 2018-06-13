@@ -27,6 +27,9 @@
             - [title](#title)
             - [button](#button)
             - [button-click](#button-click)
+        - [UITableView](#uitableview)
+            - [简单实例](#简单实例)
+            - [设置Table](#设置table)
         - [一次修改相同的视图](#一次修改相同的视图)
 
 <!-- /TOC -->
@@ -809,6 +812,169 @@ private void ShowAlert(string title, string message)
         }
     };
     altView.Show();
+}
+```
+
+### UITableView
+#### 简单实例
+创建一个新的Single View Application
+
+修改【ViewController.cs】文件中方法ViewDidLoad：
+```cs
+public partial class ViewController : UIViewController
+{
+    protected ViewController(IntPtr handle) : base(handle)
+    {
+        // Note: this .ctor should not contain any initialization logic.
+    }
+
+    //定义泛型集合，测试球队数据
+    List<string> premTeams = new List<string>() { "LIVERPOOL", "EVERTON", "ARSENAL",
+        "SRANSEA", "CARDIFF", "NECASTIE", "ABRAHAM", "ALEXANDERNAL", "ANTOINE", "ARMSTRONG", "BARTHOLOMEW" };
+
+    public override void ViewDidLoad()
+    {
+        base.ViewDidLoad();
+        // Perform any additional setup after loading the view, typically from a nib.
+
+        //定义tableview
+        UITableView tableView = new UITableView();
+        tableView.Frame = new CoreGraphics.CGRect(0, 20, View.Frame.Width, View.Frame.Height - 20);
+        tableView.Source = new MyViewSource(premTeams);//设置tableview的数据源
+
+        View.AddSubview(tableView);
+    }
+
+    public override void DidReceiveMemoryWarning()
+    {
+        base.DidReceiveMemoryWarning();
+        // Release any cached data, images, etc that aren't in use.
+    }
+}
+
+/// <summary>
+/// 构造自定义UITableViewSource类
+/// </summary>
+public class MyViewSource : UITableViewSource
+{
+    List<string> dupPremTeams;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:TableViewDemo.MyViewSource"/> class.
+    /// 自定义构造函数
+    /// </summary>
+    /// <param name="prems">Prems.</param>
+    public MyViewSource(List<string> prems)
+    {
+        dupPremTeams = prems;
+    }
+
+    /// <summary>
+    /// Gets the cell.
+    /// 重写获取单元格方法
+    /// </summary>
+    /// <returns>The cell.</returns>
+    /// <param name="tableView">Table view.</param>
+    /// <param name="indexPath">Index path.</param>
+    public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
+    {
+        UITableViewCell cell = new UITableViewCell();
+        cell.TextLabel.Text = dupPremTeams[indexPath.Row];
+        return cell;
+    }
+
+    /// <summary>
+    /// Rowses the in section.
+    /// 重写一节中有多少行方法
+    /// </summary>
+    /// <returns>The in section.</returns>
+    /// <param name="tableview">Tableview.</param>
+    /// <param name="section">Section.</param>
+    public override nint RowsInSection(UITableView tableview, nint section)
+    {
+        return this.dupPremTeams.Count;
+    }
+}
+```
+
+显示效果如下：
+![](..\assets\ui_adv\ui_table_res_1.png)
+
+#### 设置Table
+可以通过重写UITableViewSource中提供的方法，修改TableView的样式，如下：
+
+![](..\assets\ui_adv\ui_table_res_2.png)
+
+```cs
+/// <summary>
+/// 构造自定义UITableViewSource类
+/// </summary>
+public class MyViewSource : UITableViewSource
+{
+    List<string> dupPremTeams;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:TableViewDemo.MyViewSource"/> class.
+    /// 自定义构造函数
+    /// </summary>
+    /// <param name="prems">Prems.</param>
+    public MyViewSource(List<string> prems)
+    {
+        dupPremTeams = prems;
+    }
+
+    /// <summary>
+    /// Gets the cell.
+    /// 重写获取单元格方法
+    /// </summary>
+    /// <returns>The cell.</returns>
+    /// <param name="tableView">Table view.</param>
+    /// <param name="indexPath">Index path.</param>
+    public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
+    {
+        UITableViewCell cell = new UITableViewCell();
+        //设置单元格文字
+        cell.TextLabel.Text = dupPremTeams[indexPath.Row];
+        //设置单元格图片
+        cell.ImageView.Image = UIImage.FromFile("1.jpg");
+        return cell;
+    }
+
+    //添加页眉
+    public override string TitleForHeader(UITableView tableView, nint section)
+    {
+        return "球队";
+    }
+
+    //添加页脚
+    public override string TitleForFooter(UITableView tableView, nint section)
+    {
+        return "表尾";
+    }
+
+    //设置页眉行高
+    public override nfloat GetHeightForHeader(UITableView tableView, nint section)
+    {
+        return 30;
+    }
+
+    //设置页脚行高
+    public override nfloat GetHeightForFooter(UITableView tableView, nint section)
+    {
+        return 25;
+    }
+
+    /// <summary>
+    /// Rowses the in section.
+    /// 重写一节中有多少行方法
+    /// </summary>
+    /// <returns>The in section.</returns>
+    /// <param name="tableview">Tableview.</param>
+    /// <param name="section">Section.</param>
+    public override nint RowsInSection(UITableView tableview, nint section)
+    {
+        return this.dupPremTeams.Count;
+    }
 }
 ```
 
