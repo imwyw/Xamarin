@@ -286,5 +286,64 @@ ViewControllerSelected 事件可以实现标签栏控制器的响应，语法如
 标签栏控制器对象名.ViewControllerSelected += 触摸按钮后的方法;
 ```
 
+![](..\assets\cont\tab_res_2.png)
 
+修改上例代码，增加选中事件处理，修改【AppDelegate.cs】中方法：
+```cs
+public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
+{
+    // Override point for customization after application launch.
+    // If not required for your application you can safely delete this method
+
+    Window = new UIWindow(UIScreen.MainScreen.Bounds);
+    FirstViewController firstView = new FirstViewController();
+    SecondViewController secondView = new SecondViewController();
+
+    //实例化标签栏控制器
+    UITabBarController tabBarController = new UITabBarController();
+    tabBarController.SetViewControllers(new UIViewController[]{
+        firstView,
+        secondView
+    }, true);
+    //设置标题
+    tabBarController.TabBar.Items[0].Title = "First";
+    tabBarController.TabBar.Items[1].Title = "Second";
+
+    //设置标题栏样式
+    UITextAttributes textAttr = new UITextAttributes()
+    {
+        Font = UIFont.SystemFontOfSize(20),
+        TextColor = UIColor.Orange
+    };
+    UITextAttributes textSelected = new UITextAttributes()
+    {
+        TextColor = UIColor.Blue
+    };
+    UITabBarItem.Appearance.SetTitleTextAttributes(textAttr, UIControlState.Normal);
+    UITabBarItem.Appearance.SetTitleTextAttributes(textSelected, UIControlState.Selected);
+
+    //新增部分-响应标签栏控制器
+    tabBarController.ViewControllerSelected += (sender, e) =>
+    {
+        UIAlertView altView = new UIAlertView();
+
+        //判断当前选择的是哪一个视图对象
+        if (e.ViewController == firstView)
+        {
+            altView.Title = "打开FirstViewController对象的视图";
+        }
+        else
+        {
+            altView.Title = "打开SecondViewController对象的视图";
+        }
+        altView.AddButton("Cancel");
+        altView.Show();
+    };
+
+    Window.RootViewController = tabBarController;
+    Window.MakeKeyAndVisible();
+
+    return true;
+}
+```
 
